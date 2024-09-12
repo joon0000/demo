@@ -25,5 +25,5 @@ jobs:
 
       - name: Run Checkmarx Scan
         run: |
-          export CX_APIKEY=${{ env.CX1_APIKEY }}
+          export CX_APIKEY=$${{ secrets.API_KEY }}
           ./cx scan create --project-name "github_cli" --file-source "." --branch "main" --agent 'GitHub' --base-uri ${{ env.CX1_URL }} --tenant ${{ env.CX1_TENANT }}
