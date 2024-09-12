@@ -1,0 +1,29 @@
+name: Checkmarx Scan
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      CX_VERSION: "2.2.5"
+      CX1_URL: https://anz.ast.checkmarx.net
+      CX1_TENANT: nfr_westconth
+      CX1_APIKEY: ${{ secrets.API_KEY }}
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Download Checkmarx CLI
+        run: wget -O ./cxcli.tar.gz "https://github.com/Checkmarx/ast-cli/releases/download/${{ env.CX_VERSION }}/ast-cli_${{ env.CX_VERSION }}_linux_x64.tar.gz"
+      
+      - name: Extract Checkmarx CLI
+        run: tar xzvf ./cxcli.tar.gz
+
+      - name: Run Checkmarx Scan
+        run: |
+          export CX_APIKEY=${{ env.CX1_APIKEY }}
+          ./cx scan create --project-name "github_cli" --file-source "." --branch "main" --agent 'GitHub' --base-uri ${{ env.CX1_URL }} --tenant ${{ env.CX1_TENANT }}
